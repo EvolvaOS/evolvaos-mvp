@@ -1,0 +1,34 @@
+name: Test SER Engine
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install flask pytest requests
+
+      - name: Run SER API test
+        run: |
+          python ser.py &
+          sleep 3
+          curl -s -X POST http://127.0.0.1:8080/ser \
+            -H "Content-Type: application/json" \
+            -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}' | grep '"H": 3'
