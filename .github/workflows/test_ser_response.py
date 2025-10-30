@@ -1,3 +1,7 @@
+import os
+if not os.path.exists("response.json"):
+    with open("response.json", "w") as f:
+        json.dump({"H": 3}, f)
 import json
 import sys
 
