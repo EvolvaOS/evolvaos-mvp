@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,10 +30,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
           echo "Response: $RESPONSE"
-          python - <<'EOF'
-import json, sys
-data = json.loads("""$RESPONSE""")
-if data.get("H") != 3:
-    sys.exit(f"❌ Expected H=3 but got {data}")
-print("✅ SER API test passed successfully!")
-EOF
+          python -c "import json,sys; d=json.loads('$RESPONSE'); \
+if d.get('H')!=3: sys.exit(f'❌ Expected H=3 but got {d}'); \
+print('✅ SER API test passed successfully!')"
