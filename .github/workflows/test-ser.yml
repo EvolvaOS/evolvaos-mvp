@@ -2,26 +2,22 @@ name: Test SER Engine
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          pip install flask requests
+      - name: Install Flask
+        run: pip install flask requests
 
       - name: Run SER API test
         run: |
@@ -32,9 +28,9 @@ jobs:
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
           echo "Response: $RESPONSE"
           python - <<'PYCODE'
-import json, sys
-d = json.loads("""$RESPONSE""")
-if d.get("H") != 3:
-    sys.exit(f"❌ Expected H=3 but got {d}")
+import json, sys, os
+data = json.loads(os.environ["RESPONSE"])
+if data.get("H") != 3:
+    sys.exit(f"❌ Expected H=3 but got {data}")
 print("✅ SER API test passed successfully!")
 PYCODE
