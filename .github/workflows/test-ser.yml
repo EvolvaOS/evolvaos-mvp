@@ -21,14 +21,23 @@ jobs:
         run: |
           pip install flask requests
 
-      - name: Run and test SER API
+      - name: Run SER server
         run: |
           nohup python ser.py &
           sleep 5
+
+      - name: Test SER API
+        run: |
           RESPONSE=$(curl -s -X POST http://127.0.0.1:8080/ser \
             -H "Content-Type: application/json" \
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
           echo "Response: $RESPONSE"
-          python -c "import json,sys,os; d=json.loads(os.environ['RESPONSE']); 
-if d.get('H')!=3: sys.exit(f'Expected H=3 but got {d}'); 
-print('SER API test passed ✅')"
+          echo "$RESPONSE" > response.json
+          python3 - <<'PYCODE'
+import json, sys
+with open("response.json") as f:
+    data = json.load(f)
+if data.get("H") != 3:
+    sys.exit(f"❌ Expected H=3 but got {data}")
+print("✅ SER API test passed successfully!")
+PYCODE
