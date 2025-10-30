@@ -32,8 +32,7 @@ jobs:
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
           echo "Response: $RESPONSE"
           python - <<'EOF'
-import json
-import sys
+import json, sys
 data = json.loads("""$RESPONSE""")
 if data.get("H") != 3:
     sys.exit(f"❌ Expected H=3 but got {data}")
