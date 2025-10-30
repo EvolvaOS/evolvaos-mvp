@@ -21,14 +21,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install flask pytest requests
+          pip install flask requests
 
       - name: Run SER API test
         run: |
-          python ser.py &
-          sleep 3
+          nohup python ser.py &
+          sleep 5
           curl -s -X POST http://127.0.0.1:8080/ser \
             -H "Content-Type: application/json" \
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}' | grep '"H": 3'
