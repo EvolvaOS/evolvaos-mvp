@@ -33,7 +33,9 @@ jobs:
           echo "Response: $RESPONSE"
           python - <<'EOF'
 import json
+import sys
 data = json.loads("""$RESPONSE""")
-assert data.get("H") == 3, f"Expected H=3 but got {data}"
+if data.get("H") != 3:
+    sys.exit(f"❌ Expected H=3 but got {data}")
 print("✅ SER API test passed successfully!")
 EOF
