@@ -28,4 +28,4 @@ jobs:
           sleep 5
 
       - name: Run SER API test
-        run: python test_ser_response.py
+        run: python .github/workflows/test_ser_response.py
