@@ -32,9 +32,8 @@ jobs:
             -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
           echo "Response: $RESPONSE"
           python - <<'EOF'
-import sys, json
-data = json.loads(sys.argv[1])
+import json
+data = json.loads("""$RESPONSE""")
 assert data.get("H") == 3, f"Expected H=3 but got {data}"
 print("✅ SER API test passed successfully!")
 EOF
-          "$RESPONSE"
