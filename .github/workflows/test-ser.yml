@@ -27,6 +27,14 @@ jobs:
         run: |
           nohup python ser.py &
           sleep 5
-          curl -s -X POST http://127.0.0.1:8080/ser \
+          RESPONSE=$(curl -s -X POST http://127.0.0.1:8080/ser \
             -H "Content-Type: application/json" \
-            -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}' | grep '"H": 3'
+            -d '{"nodes":[{"energy":1},{"energy":2}],"prob":[0.5,0.5]}')
+          echo "Response: $RESPONSE"
+          python - <<'EOF'
+import sys, json
+data = json.loads(sys.argv[1])
+assert data.get("H") == 3, f"Expected H=3 but got {data}"
+print("✅ SER API test passed successfully!")
+EOF
+          "$RESPONSE"
